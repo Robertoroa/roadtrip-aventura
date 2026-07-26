@@ -73,6 +73,16 @@
     border:3px solid rgba(255,255,255,.75); animation:pulse 2s infinite ease-out;
   }
   @keyframes pulse{0%{transform:scale(.7); opacity:.9;} 100%{transform:scale(1.9); opacity:0;}}
+  /* Marcador de furgo sobre la ruta */
+  .van-pin{position:absolute; z-index:7; pointer-events:none;}
+  .van-pin .vp-inner{
+    transform:translate(-50%,-50%) scale(var(--inv)); transform-origin:50% 50%;
+    width:52px; height:52px; border-radius:50%; font-size:28px;
+    display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 40% 30%,#fff3d6,#ffd9a0); border:4px solid var(--red);
+    box-shadow:0 4px 10px rgba(0,0,0,.4); animation:vanbob 1.6s ease-in-out infinite;
+  }
+  @keyframes vanbob{0%,100%{margin-top:0} 50%{margin-top:-6px}}
   .pin.visited .head{background:radial-gradient(circle at 35% 30%,#b7d98a,var(--green) 60%,#5f7f38);}
   .pin.visited .head::before{display:none;}
   .pin .marker:hover{filter:drop-shadow(0 6px 8px rgba(0,0,0,.5));}
@@ -175,6 +185,8 @@
   .mission-info p{margin:0 0 8px;}
   .mission-btn{border:none; border-radius:12px; padding:10px 16px; font-family:inherit; font-weight:700; font-size:14px; color:#fff; background:#b98a3e; cursor:pointer; box-shadow:0 3px 0 #8a5a2b;}
   .mission-btn.go{background:linear-gradient(#8bbf5b,var(--green)); box-shadow:0 3px 0 #5f7f38; animation:beat 1.4s infinite;}
+  .mission-btn.como{background:linear-gradient(#5aa9e6,#3f83c7); box-shadow:0 3px 0 #2f6bb0;}
+  .mission-btns{display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
   .mission-btn:active{transform:translateY(2px);}
   .mission-hint{font-size:12px; color:#9b2f1c; margin-top:6px;}
   .mission-done{color:var(--green); font-weight:700; font-size:15px; display:flex; align-items:center; gap:8px;}
@@ -364,11 +376,21 @@
   .prize-img .lock{font-size:96px; filter:drop-shadow(0 4px 6px rgba(0,0,0,.3));}
   .prize-img .q{position:absolute; font-size:120px; color:rgba(255,255,255,.9); font-weight:900; text-shadow:0 4px 10px rgba(0,0,0,.4);}
   .prize-progress{height:20px; border-radius:12px; background:rgba(0,0,0,.12); overflow:hidden; margin:8px 0 6px; border:2px solid var(--gold-2);}
+  .prize-progress{position:relative;}
   .prize-progress .pf{height:100%; width:0; background:linear-gradient(90deg,#e9c46a,var(--green)); transition:width .5s;}
+  .prize-progress .ptick{position:absolute; top:-2px; bottom:-2px; width:3px; background:rgba(120,80,20,.55); transform:translateX(-50%);}
+  .pmarks{position:relative; height:34px; margin:2px 0 4px;}
+  .pmarks .pm{position:absolute; transform:translateX(-50%); font-size:11px; line-height:1.15; text-align:center; color:#6b4f2a; font-weight:600;}
   .prize-card .pmsg{font-size:15px; color:#6b4f2a; margin-top:4px;}
   .prize-card .pclose{position:absolute; top:10px; right:12px; width:34px; height:34px; border-radius:50%;
     border:3px solid #fff2d8; background:var(--red-dark); color:#fff; font-size:18px; cursor:pointer;}
   .confetti{position:fixed; inset:0; pointer-events:none; z-index:90; display:none;}
+
+  /* Versiones MOBILE (vertical): portadamobile / loadingmobile, con fallback a escritorio */
+  @media (orientation:portrait){
+    .splash{ background-image:linear-gradient(to bottom, rgba(20,12,6,.12) 0%, transparent 40%, rgba(20,12,6,.55) 100%), url('img/portadamobile.png'), url('img/portada.png'); }
+    #loading{ background-image:linear-gradient(to bottom, rgba(20,12,6,.15) 30%, rgba(20,12,6,.72) 100%), url('img/loadingmobile.png'), url('img/loading.jpg'); }
+  }
 
   .calib{position:fixed; left:10px; bottom:10px; z-index:60; background:rgba(0,0,0,.78); color:#0f0; font:13px monospace; padding:7px 11px; border-radius:8px; display:none;}
   .calib.on{display:block;}
@@ -470,8 +492,9 @@
       <div class="prize-img" id="prizeImg">
         <span class="lock">🎁</span><span class="q" id="prizeQ">?</span>
       </div>
-      <div class="prize-progress"><div class="pf" id="prizePF"></div></div>
-      <div class="pmsg" id="prizeMsg">Consigue todas las paradas para desvelar el premio.</div>
+      <div class="prize-progress"><div class="pf" id="prizePF"></div><span class="ptick" style="left:50%"></span></div>
+      <div class="pmarks"><span class="pm" style="left:50%">🎁 Desvelar<br>40 pts</span><span class="pm" style="left:100%">🏆 Ganar<br>80 pts</span></div>
+      <div class="pmsg" id="prizeMsg">Consigue 40 puntos para conocer el premio.</div>
     </div>
   </div>
 </div>
@@ -745,18 +768,26 @@ fit();
    ====================================================================== */
 // Coordenadas reales de cada parada (ajusta a tu edificio objetivo si quieres)
 const GPS={
-  madrid:[40.4179,-3.7143],      // Palacio Real
-  burgos:[42.3405,-3.7043],      // Catedral de Burgos
-  pamplona:[42.8189,-1.6438],    // Plaza de Toros / casco viejo
-  sanjuan:[43.3880,-1.6626],     // San Juan de Luz
-  ainhoa:[43.3067,-1.4989],      // Ainhoa
-  espelette:[43.3444,-1.4447],   // Espelette
-  hossegor:[43.6620,-1.3956],    // Soorts-Hossegor
-  capbreton:[43.6425,-1.4300],   // Capbreton
-  dune:[44.5883,-1.2117],        // Dune du Pilat
-  burdeos:[44.8412,-0.5700]      // Place de la Bourse
+  madrid:[40.4179,-3.7143],
+  burgos:[42.3405,-3.7043],
+  pamplona:[42.8189,-1.6438],
+  sanjuan:[43.3876917,-1.6653350], // ubicación exacta del edificio
+  ainhoa:[43.3067,-1.4989],
+  espelette:[43.3444,-1.4447],
+  hossegor:[43.6620,-1.3956],
+  capbreton:[43.6425,-1.4300],
+  dune:[44.5883,-1.2117],
+  burdeos:[44.8412,-0.5700]
 };
-PARADAS.forEach(s=>{ const g=GPS[s.id]||[0,0]; s.lat=g[0]; s.lng=g[1]; s.radio=60; s.objetivo='img/objetivo-'+s.id+'.png'; });
+// Foto del edificio a fotografiar en cada parada (todas subidas a img/)
+const OBJETIVO={ sanjuan:'img/sanjuan.jpg' };
+// Enlace de Google Maps "cómo llegar" de cada parada
+const MAPS={ sanjuan:'https://maps.app.goo.gl/k9w81PY2XCidNKFeA' };
+PARADAS.forEach(s=>{
+  const g=GPS[s.id]||[0,0]; s.lat=g[0]; s.lng=g[1]; s.radio=100;
+  s.objetivo=OBJETIVO[s.id]||('img/objetivo-'+s.id+'.png');
+  s.maps=MAPS[s.id]||('https://www.google.com/maps?q='+s.lat+','+s.lng);
+});
 
 const SKEY='roadtrip_game_v1';
 let STATE=JSON.parse(localStorage.getItem(SKEY)||'{}');
@@ -777,16 +808,35 @@ function updateGameUI(){
   updatePrize();
 }
 function updatePrize(){
-  const done=nDone(), tot=PARADAS.length, pct=Math.round(done/tot*100), won=allDone()||points()>=100;
-  $('prizePF').style.width=pct+'%';
+  const pts=points(), revealed=pts>=40, won=pts>=80;
+  $('prizePF').style.width=Math.min(100, pts/80*100)+'%';
   const pi=$('prizeImg');
   if(won){
-    pi.innerHTML=`<img src="img/premio.png" alt="premio" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'lock',textContent:'🎉'}))">`;
-    $('prizeMsg').innerHTML='<b>¡PREMIO DESBLOQUEADO!</b> 🏆 ¡Has completado todo el viaje!';
+    pi.innerHTML='<span class="lock">🏐</span>';
+    $('prizeMsg').innerHTML='<b>¡HAS GANADO! 🏆</b><br>El premio es una <b>red de vóley</b>. ¡A jugar en la playa!';
+  } else if(revealed){
+    pi.innerHTML='<span class="lock">🏐</span>';
+    $('prizeMsg').innerHTML='¡El premio es una <b>red de vóley</b>! 🏐<br>Consigue <b>80 puntos</b> para ganarla — llevas <b>'+pts+'</b>.';
   } else {
     pi.innerHTML='<span class="lock">🎁</span><span class="q">?</span>';
-    $('prizeMsg').textContent=`Te faltan ${tot-done} paradas para desvelar el premio (${points()}/100 pts).`;
+    $('prizeMsg').innerHTML='Consigue <b>40 puntos</b> para conocer el premio.<br>Llevas <b>'+pts+'/40</b>.';
   }
+}
+
+/* ---- Marcador de furgo sobre la ruta (posición interpolada) ---- */
+const vanPin=document.createElement('div'); vanPin.className='van-pin'; vanPin.style.display='none';
+vanPin.innerHTML='<div class="vp-inner">🚐</div>';
+world.appendChild(vanPin);
+function placeVanOnRoute(){
+  if(!myPos){ vanPin.style.display='none'; return; }
+  let iA=0,dA=Infinity;
+  PARADAS.forEach((s,i)=>{const d=distM(myPos[0],myPos[1],s.lat,s.lng); if(d<dA){dA=d;iA=i;}});
+  const A=PARADAS[iA];
+  let B=null,dB=Infinity;
+  [iA-1,iA+1].forEach(j=>{ if(j>=0&&j<PARADAS.length){const s=PARADAS[j],d=distM(myPos[0],myPos[1],s.lat,s.lng); if(d<dB){dB=d;B=s;}} });
+  let x=A.x,y=A.y;
+  if(B){ const t=dA/(dA+dB); x=A.x+(B.x-A.x)*t; y=A.y+(B.y-A.y)*t; }
+  vanPin.style.left=x+'%'; vanPin.style.top=y+'%'; vanPin.style.display='block';
 }
 
 /* ---- Geolocalización ---- */
@@ -811,6 +861,7 @@ function refreshVan(){
   $('vcDist').textContent = done ? '✓ ¡Ya conseguiste esta parada!' : here ? '¡Estás aquí! Busca el edificio 📷' : 'A '+fmtDist(bd)+' de aquí';
   card.classList.toggle('here', here && !done);
   $('vcGo').onclick=()=>abrirParada(best);
+  placeVanOnRoute();
 }
 
 /* ---- Misión dentro del popup ---- */
@@ -826,15 +877,17 @@ function renderMission(s){
     const ph=STATE.photos[s.id];
     right=`<div class="mission-done">✓ ¡Conseguido! <span>+10 pts</span>${ph?`<img class="thumb" src="${ph}">`:''}</div>`;
   } else {
-    right=`<button class="mission-btn ${near?'go':''}" id="missionBtn">📷 ${near?'¡Buscar el edificio!':'Buscar el edificio'}</button>
-           <div class="mission-hint">${dist==null?'Activa la ubicación del móvil':near?'¡Estás en el sitio! Enfoca el edificio.':'Acércate: estás a '+fmtDist(dist)}</div>`;
+    right=`<button class="mission-btn ${near?'go':''}" id="missionBtn">📷 ${near?'¡Hacer la foto!':'Subir la foto'}</button>
+           <div class="mission-hint">${dist==null?'Activa la ubicación del móvil':near?'¡Estás en el sitio! Enfoca el edificio y dispara.':'Dirígete a la localización exacta (estás a '+fmtDist(dist)+').'}</div>`;
   }
-  slot.innerHTML=`<h4>🎯 La misión de la peque</h4><div class="mission">${targetImg}<div class="mission-info"><p>Busca <b>este edificio</b> por ${s.nombre} y hazle una foto.</p>${right}</div></div>`;
+  const como = s.maps ? `<button class="mission-btn como" id="comoBtn">🧭 Cómo llegar</button>` : '';
+  slot.innerHTML=`<h4>🎯 La misión de la peque</h4><div class="mission">${targetImg}<div class="mission-info"><p>Encuentra <b>este edificio</b> en ${s.nombre} y hazle una foto <i>desde su ubicación</i>.</p><div class="mission-btns">${como}${right}</div></div></div>`;
+  const cb=$('comoBtn'); if(cb) cb.onclick=()=>window.open(s.maps,'_blank');
   const b=$('missionBtn');
   if(b) b.onclick=()=>{
     const d=myPos?distM(myPos[0],myPos[1],s.lat,s.lng):null;
     if(d!=null && d<=s.radio) openCamera(s);
-    else alert(d!=null ? `¡Aún no estás junto al edificio! Estás a ${fmtDist(d)}. Acércate a menos de ${s.radio} m.` : 'Activa la ubicación del móvil para poder buscar el edificio.');
+    else alert('Dirígete a la localización exacta y vuelve a subir la foto.'+(d!=null?` (Ahora estás a ${fmtDist(d)}; hay que estar a menos de ${s.radio} m.)`:''));
   };
 }
 
@@ -868,11 +921,12 @@ function awardStop(s,photo){
   STATE.done[s.id]=true; STATE.photos[s.id]=photo; saveState();
   updateGameUI(); refreshVan(); ping();
   if(overlay.classList.contains('open')&&curStop&&curStop.id===s.id) renderMission(s);
-  const won=allDone();
-  $('winTitle').textContent = won?'¡VIAJE COMPLETADO!':'¡Conseguido!';
-  $('winSub').textContent   = won?'¡Has encontrado todos los edificios! 🏆':(s.nombre+' ✓');
+  const pts=points(), won=pts>=80, reveal=pts===40;
+  $('winTitle').textContent = won?'¡HAS GANADO!':reveal?'¡Premio desvelado!':'¡Conseguido!';
+  $('winSub').innerHTML     = won?'¡Ya tienes 80 puntos! 🏆':reveal?'¡Ya puedes ver el premio! 🎁':(s.nombre+' ✓ (+10 pts)');
   $('winPop').classList.add('open');
   if(won) setTimeout(()=>{ $('winPop').classList.remove('open'); openPrize(); confetti(); },1900);
+  else if(reveal) setTimeout(()=>{ $('winPop').classList.remove('open'); openPrize(); },1900);
 }
 $('winClose').onclick=()=>$('winPop').classList.remove('open');
 
@@ -916,12 +970,17 @@ document.getElementById('startBtn').addEventListener('click',()=>{
 
 function runLoading(){
   loading.style.display='flex';
-  const dur=5000, t0=performance.now();
+  const mobile=window.matchMedia('(orientation:portrait)').matches;
+  const dur=mobile?9000:5000, t0=performance.now();
+  const grad="linear-gradient(to bottom, rgba(20,12,6,.15) 30%, rgba(20,12,6,.72) 100%)";
+  let swapped=false;
+  if(mobile) loading.style.backgroundImage=grad+", url('img/loadingmobile.png')";
   (function step(t){
     const p=Math.min(1,(t-t0)/dur);
     loadFill.style.width=(p*100).toFixed(1)+'%';
     loadPct.textContent=Math.floor(p*100)+'%';
     loadMsg.textContent=LOAD_MSGS[Math.min(LOAD_MSGS.length-1,Math.floor(p*LOAD_MSGS.length))];
+    if(mobile && !swapped && p>=0.5){ swapped=true; loading.style.backgroundImage=grad+", url('img/loadingmobile2.png')"; }
     if(p<1) requestAnimationFrame(step);
     else { ping(); setTimeout(()=>{ loading.classList.add('hide'); setTimeout(()=>loading.style.display='none',650); },300); }
   })(t0);
