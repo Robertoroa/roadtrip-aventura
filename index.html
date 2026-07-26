@@ -157,6 +157,9 @@
   .modal-text{flex:1 1 auto; font-size:clamp(14px,1.7vw,16px); line-height:1.5;}
   .modal-text h4{margin:2px 0 6px; color:var(--red-dark); font-size:1.05em; display:flex; align-items:center; gap:7px;}
   .modal-text p{margin:0 0 12px;}
+  .hist{margin:0 0 12px; line-height:1.55;}
+  .hist .destacado{font-family:'Caveat',cursive; font-size:1.32em; font-weight:700; color:var(--red-dark);
+    background:#fff6df; border-left:5px solid var(--gold-2); border-radius:8px; padding:8px 12px; margin:12px 0;}
   .likes{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 14px;}
   .chip{background:var(--green); color:#fff; font-size:13px; font-weight:600; padding:4px 11px; border-radius:20px; box-shadow:0 2px 5px rgba(0,0,0,.2);}
   .acts{list-style:none; padding:0; margin:0;}
@@ -182,9 +185,14 @@
   .splash{
     position:fixed; inset:0; z-index:80; overflow:hidden;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:clamp(8px,1.6vh,18px); text-align:center; padding:24px;
-    background:radial-gradient(130% 130% at 50% 25%, #f6e7c4 0%, #e6c98f 45%, #b98a52 100%);
+    gap:clamp(14px,3vh,30px); text-align:center; padding:clamp(14px,3vw,28px);
+    background:linear-gradient(160deg,#9ad3e4 0%,#bfe0c2 45%,#e9cf9a 100%);
     transition:opacity .5s ease, transform .5s ease;
+  }
+  .splash .cover{
+    max-width:min(96vw,1040px); max-height:72vh; width:auto; height:auto;
+    border-radius:20px; border:5px solid #fff2d8; box-shadow:0 18px 44px rgba(60,35,10,.45);
+    animation:floaty 4s ease-in-out infinite;
   }
   .splash::before{
     content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
@@ -374,12 +382,7 @@
 
 <!-- ============ SPLASH DE BIENVENIDA ============ -->
 <div class="splash" id="splash">
-  <div class="s-banner">
-    <div class="k">Nuestra gran aventura</div>
-    <h1>ROAD TRIP</h1>
-    <div class="fl">🇪🇸 España · Francia 🇫🇷</div>
-  </div>
-  <img class="fam" src="img/familia.png" alt="La familia" onerror="this.style.display='none'">
+  <img class="cover" src="img/portada.png" alt="Road Trip España-Francia" onerror="this.style.display='none'">
   <button class="start" id="startBtn">▶︎ ¡Empezar la aventura!</button>
 </div>
 
@@ -519,34 +522,34 @@ const PERSONAJES = [
    Orden del viaje: Madrid, Burgos, Pamplona, San Juan de Luz, Ainhoa, Espelette,
    Hossegor, Capbreton, Dune du Pilat, Bordeaux. */
 const PARADAS = [
-  {n:1, id:"madrid", nombre:"Madrid", pais:"España 🇪🇸", x:38, y:94, emoji:"👑", img:"img/parada-madrid.png",
+  {n:1, id:"madrid", nombre:"Madrid", pais:"España 🇪🇸", x:40, y:82, emoji:"👑", img:"img/parada-madrid.png",
    historia:"El punto de salida. Capital de España desde 1561, cuando Felipe II trasladó aquí la corte. Su símbolo, el Palacio Real, es de los más grandes de Europa.",
    actividades:[["🏰","Visitar el Palacio Real y ver el cambio de guardia."],["🚪","La Puerta de Alcalá y el Retiro."],["🍫","Chocolate con churros."]]},
-  {n:2, id:"burgos", nombre:"Burgos", pais:"España 🇪🇸", x:41, y:74, emoji:"⛪", img:"img/parada-burgos.png",
+  {n:2, id:"burgos", nombre:"Burgos", pais:"España 🇪🇸", x:44, y:70, emoji:"⛪", img:"img/parada-burgos.png",
    historia:"Su Catedral gótica es Patrimonio de la Humanidad y guarda la tumba del Cid Campeador, el caballero más legendario de España.",
    actividades:[["⛪","Alucinar con las agujas de la Catedral de Burgos."],["🦴","Museo de la Evolución Humana (¡Atapuerca!)."],["🌭","Probar la morcilla de Burgos."]]},
-  {n:3, id:"pamplona", nombre:"Pamplona", pais:"España 🇪🇸", x:45, y:66, emoji:"🐂", img:"img/parada-pamplona.png",
+  {n:3, id:"pamplona", nombre:"Pamplona", pais:"España 🇪🇸", x:50, y:63, emoji:"🐂", img:"img/parada-pamplona.png",
    historia:"Fundada por el general romano Pompeyo. Es mundialmente famosa por las fiestas de San Fermín (6–14 de julio) y sus encierros de toros por las calles.",
    actividades:[["🐂","Ver la plaza y las calles del encierro de San Fermín."],["🧱","Pasear por las murallas y el casco viejo."],["🍢","Ir de pintxos por la calle Estafeta."]]},
-  {n:4, id:"sanjuan", nombre:"San Juan de Luz", pais:"Francia 🇫🇷", x:42, y:54, emoji:"⛵", img:"img/parada-sanjuan.png",
-   historia:"Precioso pueblo pesquero vasco-francés donde se casó el rey Luis XIV en 1660. Su bahía está protegida por diques, así que el mar es tranquilo.",
+  {n:4, id:"sanjuan", nombre:"San Juan de Luz", pais:"Francia 🇫🇷", x:42, y:53, emoji:"🏴‍☠️", img:"img/pirata.png",
+   historia:"San Juan de Luz nació en el siglo XI dedicado al mar y a la caza de ballenas. En el siglo XVII, con menos capturas y la competencia inglesa y holandesa, muchos pescadores se reinventaron como <b>corsarios</b>: marineros que, con permiso del rey, podían apoderarse de los barcos enemigos y repartirse el botín. El más famoso fue <b>Coursic</b>, que capturó más de cien barcos y aterró a españoles, ingleses y holandeses. Por eso muchas calles llevan hoy el nombre de aquellos corsarios.<div class='destacado'>“Una boda real en la ciudad puso fin a una guerra”</div>El 7 de noviembre de 1659, en la isla de los Faisanes, se firmó el <b>Tratado de los Pirineos</b>, que acabó con años de guerra entre Francia y España. Para sellar la paz se casó al rey <b>Luis XIV</b> con <b>María Teresa</b>, hija del rey de España, aquí en San Juan de Luz en junio de 1660. Después llegó la aristocracia inglesa a veranear, con elegantes mansiones y hoteles con electricidad y agua caliente… ¡todo un lujo para la época!",
    actividades:[["🏖️","Bañarse en su playa protegida y calmada."],["🏠","Ver las casas vascas de entramado rojo."],["🍰","Probar el auténtico gâteau basque."]]},
   {n:5, id:"ainhoa", nombre:"Ainhoa", pais:"Francia 🇫🇷", x:50, y:56, emoji:"🏡", img:"img/parada-ainhoa.png",
    historia:"Catalogado como uno de 'Los pueblos más bonitos de Francia'. Es una única calle larga con casas blancas de vigas rojas y verdes de los siglos XVII y XVIII.",
    actividades:[["📸","Fotos entre casas de cuento."],["⛪","Ver su iglesia y el frontón de pelota vasca."],["🚶","Pasear tranquilos, sin coches."]]},
-  {n:6, id:"espelette", nombre:"Espelette", pais:"Francia 🇫🇷", x:55, y:60, emoji:"🌶️", img:"img/parada-espelette.png",
+  {n:6, id:"espelette", nombre:"Espelette", pais:"Francia 🇫🇷", x:57, y:58, emoji:"🌶️", img:"img/parada-espelette.png",
    historia:"El pueblo del famoso pimiento. El chile llegó de América en el s.XVI y aquí es oro rojo: en otoño las fachadas se cubren de ristras secándose al sol.",
    actividades:[["🌶️","Fachadas cubiertas de pimientos rojos."],["🛍️","Comprar especias y mermeladas típicas."],["🧀","Queso de oveja con mermelada de cereza negra."]]},
-  {n:7, id:"hossegor", nombre:"Hossegor", pais:"Francia 🇫🇷", x:50, y:46, emoji:"🏄", img:"img/parada-hossegor.png",
+  {n:7, id:"hossegor", nombre:"Hossegor", pais:"Francia 🇫🇷", x:52, y:48, emoji:"🏄", img:"img/parada-hossegor.png",
    historia:"La capital europea del surf: aquí se celebran campeonatos del mundo. Tiene además un lago marino ideal para los más peques.",
    actividades:[["🏄","Ver (o probar) el surf en sus olas famosas."],["🛶","Baño tranquilo en el lago marino."],["🛹","Skate y tiendas de surf por todas partes."]]},
-  {n:8, id:"capbreton", nombre:"Capbreton", pais:"Francia 🇫🇷", x:51, y:38, emoji:"⚓", img:"img/parada-capbreton.png",
+  {n:8, id:"capbreton", nombre:"Capbreton", pais:"Francia 🇫🇷", x:54, y:42, emoji:"⚓", img:"img/parada-capbreton.png",
    historia:"Puerto pesquero animado. Frente a su costa está 'le Gouf', un cañón submarino gigante de más de 3.000 m de profundidad que empieza casi en la playa.",
    actividades:[["🐟","Ver la lonja y el mercado del pescado."],["🚶","Pasear por el espigón hasta el faro."],["🍦","Helado viendo entrar los barcos."]]},
-  {n:9, id:"dune", nombre:"Dune du Pilat", pais:"Francia 🇫🇷", x:51, y:30, emoji:"🏜️", img:"img/parada-dune.png",
+  {n:9, id:"dune", nombre:"Dune du Pilat", pais:"Francia 🇫🇷", x:47, y:33, emoji:"🏜️", img:"img/parada-dune.png",
    historia:"¡La duna de arena más alta de Europa, unos 110 m! Una montaña de playa que avanza poco a poco tierra adentro empujada por el viento.",
    actividades:[["🧗","Subir a lo alto de la duna gigante."],["🌅","Vistas al banco de Arguin y al océano."],["🪂","Ver parapentes despegar desde la cima."]]},
-  {n:10, id:"burdeos", nombre:"Bordeaux", pais:"Francia 🇫🇷", x:57, y:30, emoji:"🍇", img:"img/parada-burdeos.png",
+  {n:10, id:"burdeos", nombre:"Bordeaux", pais:"Francia 🇫🇷", x:60, y:35, emoji:"🍇", img:"img/parada-burdeos.png",
    historia:"El final del viaje. La 'perla de Aquitania', famosa por su vino y su elegante centro histórico, Patrimonio de la Humanidad.",
    actividades:[["🪞","El Miroir d'eau frente a la Place de la Bourse."],["🍇","La Cité du Vin, el museo del vino."],["🍮","Probar los canelés, el dulce típico."]]}
 ];
@@ -691,7 +694,7 @@ function abrirParada(s){
     <div class="modal-img"><img src="${s.img}" alt="${s.nombre}"
       onerror="this.style.display='none'; this.insertAdjacentHTML('afterend','<span class=\\'fb\\'>${s.emoji}</span>');"></div>
     <div class="modal-text">
-      <h4>📖 Un poco de historia</h4><p>${s.historia}</p>
+      <h4>📖 Un poco de historia</h4><div class="hist">${s.historia}</div>
       <h4>🎒 Qué hacer aquí</h4>
       <ul class="acts">${s.actividades.map(a=>`<li><span class="ic">${a[0]}</span><span>${a[1]}</span></li>`).join('')}</ul>
       <div id="missionSlot"></div>
