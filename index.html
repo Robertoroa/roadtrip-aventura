@@ -807,8 +807,8 @@ const GPS={
   burgos:[42.3405,-3.7043],
   pamplona:[42.8189,-1.6438],
   zugarramurdi:[43.2647,-1.5347],
-  hondarribia:[43.3625,-1.7920],
-  hendaya:[43.3745,-1.7739],
+  hondarribia:[43.3691218,-1.7943971], // Bar Azken Portu (barrio de la Marina)
+  hendaya:[43.3770173,-1.7382216], // aquapark (edificio a fotografiar)
   sanjuan:[43.3876917,-1.6653350],
   ainhoa:[43.3067,-1.4989],
   espelette:[43.3444,-1.4447],
@@ -818,9 +818,9 @@ const GPS={
   burdeos:[44.8412,-0.5700]
 }
 // Foto del edificio a fotografiar en cada parada (todas subidas a img/)
-const OBJETIVO={ sanjuan:'img/sanjuan.jpg' };
+const OBJETIVO={ sanjuan:'img/sanjuan.jpg', hondarribia:'img/zkenportu.jpg', hendaya:'img/hendaya.jpg' };
 // Enlace de Google Maps "cómo llegar" de cada parada
-const MAPS={ sanjuan:'https://maps.app.goo.gl/k9w81PY2XCidNKFeA' };
+const MAPS={ sanjuan:'https://maps.app.goo.gl/k9w81PY2XCidNKFeA', hondarribia:'https://www.google.com/maps/dir/?api=1&destination=43.3691218,-1.7943971', hendaya:'https://maps.app.goo.gl/PRCG5kBfeoFDZUMi7' };
 PARADAS.forEach(s=>{
   const g=GPS[s.id]||[0,0]; s.lat=g[0]; s.lng=g[1]; s.radio=100;
   s.objetivo=OBJETIVO[s.id]||('img/objetivo-'+s.id+'.png');
