@@ -830,7 +830,21 @@ PARADAS.forEach(s=>{
 const SKEY='roadtrip_game_v1';
 let STATE=JSON.parse(localStorage.getItem(SKEY)||'{}');
 STATE.done=STATE.done||{}; STATE.photos=STATE.photos||{};
-function saveState(){ localStorage.setItem(SKEY,JSON.stringify(STATE)); }
+function saveState(){
+  try{ localStorage.setItem(SKEY,JSON.stringify(STATE)); }
+  catch(e){
+    // Si no cabe (cuota llena por las fotos), guardamos SIN fotos: los puntos nunca se pierden
+    try{ localStorage.setItem(SKEY,JSON.stringify({done:STATE.done,photos:{}})); }
+    catch(_){ try{ localStorage.setItem(SKEY,JSON.stringify({done:STATE.done})); }catch(__){} }
+  }
+}
+// Miniatura ligera de la foto para poder guardarla sin llenar el almacenamiento
+function makeThumb(canvas){
+  const max=420, w=canvas.width||640, h=canvas.height||480, s=Math.min(1, max/Math.max(w,h));
+  const t=document.createElement('canvas'); t.width=Math.round(w*s); t.height=Math.round(h*s);
+  t.getContext('2d').drawImage(canvas,0,0,t.width,t.height);
+  return t.toDataURL('image/jpeg',0.5);
+}
 function nDone(){ return Object.keys(STATE.done).length; }
 function points(){ return nDone()*10; }
 function allDone(){ return PARADAS.every(s=>STATE.done[s.id]); }
@@ -951,7 +965,7 @@ $('camShot').onclick=()=>{
   v.style.display='none'; c.style.display='block'; $('camTools').style.display='none'; $('camConfirm').style.display='flex';
 };
 $('camRetry').onclick=camLive;
-$('camAccept').onclick=()=>{ const data=$('camCanvas').toDataURL('image/jpeg',0.55); awardStop(camStop,data); closeCamera(); };
+$('camAccept').onclick=()=>{ awardStop(camStop, makeThumb($('camCanvas'))); closeCamera(); };
 
 /* ---- Conseguir parada ---- */
 function awardStop(s,photo){
